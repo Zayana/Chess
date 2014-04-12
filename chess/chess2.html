@@ -1,0 +1,231 @@
+<html>
+<head>
+	<script src="jquery-2.1.0.js"></script>
+</head>
+<body>
+	<table>
+		<tbody id="chess_board">
+		</tbody>
+	</table>
+	<script>
+		var KING = 10;
+		var QUEEN = 9;
+		var ROOK = 8;
+		var BISHOP = 7;
+		var KNIGHT = 6;
+		var PAWN = 5;
+		var PAWN_S = 4;
+		var board = [
+					[-ROOK,-KNIGHT,-BISHOP,-QUEEN,-KING,-BISHOP,-KNIGHT,-ROOK],
+					[-PAWN_S,-PAWN_S,-PAWN_S,-PAWN_S,-PAWN_S,-PAWN_S,-PAWN_S,-PAWN_S],
+					[0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0],
+					[PAWN_S,PAWN_S,PAWN_S,PAWN_S,PAWN_S,PAWN_S,PAWN_S,PAWN_S],
+					[ROOK,KNIGHT,BISHOP,QUEEN,KING,BISHOP,KNIGHT,ROOK]
+				    ];
+		var grid='';
+		var white_turn = true;
+		for(i = 0; i < 8; i++){
+			grid+='<tr style="height:70px">';
+			for(j = 0; j < 8; j++){
+				if(i % 2 -j % 2 == 0)
+					color="#cfcfcf";
+				else
+					color="#ffffff";
+				grid+='<td style="width:70px;background-color:'+color+';background-repeat: no-repeat;background-position: 50%;" id="c'+i+'_'+j+'">';
+				grid+='</td>';
+							}
+			grid+='</tr>';
+						}
+		document.getElementById("chess_board").innerHTML=grid;
+		var sX = 0;
+		var sY = 0;
+		var canMove = false;
+		$("td").on('click', function(){
+			var x = this.cellIndex;
+			var y = this.parentNode.rowIndex;
+			if(canMove)
+				{
+					if(board[y][x] == 0)
+					{
+						canMove = false;
+						if(Math.abs(board[sY][sX]) == PAWN || Math.abs(board[sY][sX]) == PAWN_S)
+								if(move_p(sX, sY, x, y))
+									white_turn = !white_turn;
+									draw_figures();
+					}
+					if(board[y][x] == 0)
+					{
+						canMove = false;
+						if(Math.abs(board[sY][sX]) == KING)
+								if(move_K(sX, sY, x, y))
+									white_turn = !white_turn;
+									draw_figures();
+					}
+					if(board[y][x] == 0)
+					{
+						canMove = false;
+						if(Math.abs(board[sY][sX]) == QUEEN)
+								if(move_Q(sX, sY, x, y))
+									white_turn = !white_turn;
+									draw_figures();
+					}
+					if(board[y][x] == 0)
+					{
+						canMove = false;
+						if(Math.abs(board[sY][sX]) == ROOK)
+								if(move_R(sX, sY, x, y))
+									white_turn = !white_turn;
+									draw_figures();
+					}
+					if(board[y][x] == 0)
+					{
+						canMove = false;
+						if(Math.abs(board[sY][sX]) == BISHOP)
+								if(move_B(sX, sY, x, y))
+									white_turn = !white_turn;
+									draw_figures();
+					}
+					if(board[y][x] == 0)
+					{
+						canMove = false;
+						if(Math.abs(board[sY][sX]) == KNIGHT)
+								if(move_KN(sX, sY, x, y))
+									white_turn = !white_turn;
+									draw_figures();
+					}
+					
+				}
+				else
+				{
+					if(board[y][x] != 0)
+					{
+						if(board[y][x] == 0 || (white_turn && board[y][x] < 0) || (!white_turn && board[y][x] > 0))
+							return false;
+						sX = x;
+						sY = y;
+						canMove = true;
+					}
+				}
+		});
+		function move_p(fX, fY, tX, tY)
+		{
+			if(fX != tX)
+				return;
+			if(Math.abs(grid[fY][fX]) == PAWN_S)
+			{
+				if(Math.abs(fY - tY) > 2)
+					return;
+				grid[fY][fX] = PAWN * (grid[fY][fX] / PAWN_S);
+			}
+			else
+			{
+				if(Math.abs(fY - tY) > 2 || (fY - tY < 0 && grid[fY][fX] == PAWN) || (fY - tY > 0 && grid[fY][fX] == -PAWN))
+					return;
+			}
+			board[tY][tX] = board[fY][fX];
+			board[fY][fX] = 0;
+			return true;
+		}
+		function move_K(fX, fY, tX, tY)
+		{
+			if(Math.abs(grid[fY][fX]) == KING)
+			{
+				if(Math.abs(fY - tY) > 1)
+					return;
+			}
+			else
+			{
+				if(Math.abs(fY - tY) > 1 || (fY - tY < 0 && grid[fY][fX] == KING) || (fY - tY > 0 && grid[fY][fX] == -KING))
+					return;
+			}
+			board[tY][tX] = board[fY][fX];
+			board[fY][fX] = 0;
+			return true;
+		}
+		function move_Q(fX, fY, tX, tY)
+		{
+			if(Math.abs(grid[fY][fX]) == QUEEN)
+			{
+				if(Math.abs(fY - tY) > 4)
+					return;
+			}
+			else
+			{
+				if(Math.abs(fY - tY) > 4 || (fY - tY < 0 && grid[fY][fX] == QUEEN) || (fY - tY > 0 && grid[fY][fX] == -QUEEN))
+					return;
+			}
+			board[tY][tX] = board[fY][fX];
+			board[fY][fX] = 0;
+			return true;
+		}
+		function move_R(fX, fY, tX, tY)
+		{
+			if(fX != tX && fY != tY)
+				return;
+			if(Math.abs(grid[fY][fX]) == ROOK)
+			{
+				if(Math.abs(fY - tY) > 2)
+					return;
+			}
+			else
+			{
+				if(Math.abs(fY - tY) > 2 || (fY - tY < 0 && grid[fY][fX] == ROOK) || (fY - tY > 0 && grid[fY][fX] == -ROOK))
+					return;
+			}
+			board[tY][tX] = board[fY][fX];
+			board[fY][fX] = 0;
+			return true;
+		}
+		function move_B(fX, fY, tX, tY)
+		{
+			if(Math.abs(grid[fY][fX]) == BISHOP)
+			{
+				if(Math.abs(fY - tY) == 3)
+					return;
+			}
+			else
+			{
+				if(Math.abs(fY - tY) == 3 || (fY - tY < 0 && grid[fY][fX] == BISHOP) || (fY - tY > 0 && grid[fY][fX] == BISHOP))
+					return;
+			}
+			if(fX > tX && fY > tY || fX < tX && fY < tY || fX > tX && fY < tY || fX < tX && fY > tY)
+			{
+			board[tY][tX] = board[fY][fX];
+			board[fY][fX] = 0;
+			return true;
+			}
+		}
+		function move_KN(fX, fY, tX, tY)
+		{
+			if(Math.abs(fX - tX) > 1 && fX != tX)
+			if(Math.abs(grid[fY][fX]) == KNIGHT)
+			{
+				if(Math.abs(fY - tY) > 2)
+					return;
+			}
+			else
+			{
+				if(Math.abs(fY - tY) > 2 || (fY - tY < 0 && grid[fY][fX] == KNIGHT) || (fY - tY > 0 && grid[fY][fX] == -KNIGHT))
+					return;
+			}
+			board[tY][tX] = board[fY][fX];
+			board[fY][fX] = 0;
+			return true;
+		}
+		function draw_figures(){
+			for(i=0;i<8;i++)
+				for(j=0;j<8;j++)
+				{
+					if(board[i][j]==0)
+						$('#c'+i+'_'+j).css("background-image", "none");
+					else
+						$('#c'+i+'_'+j).css("background-image", "url(images/t"+board[i][j]+".png)");
+				}
+		}
+		draw_figures();
+	</script
+</body>
+</html>
